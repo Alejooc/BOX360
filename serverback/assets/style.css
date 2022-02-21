@@ -1,0 +1,13 @@
+body {
+	background-color: #f3f3f3;
+}
+.container {
+	background: #fff;
+}
+.pagination {
+	text-align: center;
+	display:  block;
+}
+.pagination a {
+	color: green;
+}
