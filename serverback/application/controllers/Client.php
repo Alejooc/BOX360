@@ -1,14 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Employee extends CI_Controller {
+class Client extends CI_Controller {
 	var $titulo = "Empleado";
-	var $modulo = "employee";
+	var $modulo = "client";
 	public function __construct()
 	{
 		parent::__construct();		
 		date_default_timezone_set('America/Bogota');
-		$this->load->model('model_employee','model');		
+		$this->load->model('model_client','model');		
 		
 		$data=ChkToken($this->input->request_headers());
 		$info=validsession($data);
@@ -35,10 +35,10 @@ class Employee extends CI_Controller {
 			/* PERSONALIZAR NOMBRE DE LAS COLUMNAS */
 			$columns_valid = array(
 				"",
-				"a.id",
+				"a.docId",
 				"a.name",
-				"b.name",
-				"type"
+				"a.type",
+				"a.status"
 			);
 			if(!isset($columns_valid[$col])) {
 			   $order = null;
@@ -60,15 +60,16 @@ class Employee extends CI_Controller {
 		}
         $results = $this->model->get_all($start, $length, $order, $dir,$search,$columns_valid,$cb);
 		$data = array();
-		$tipe_emple = array("NOMINA"=>"NOMINA","CONTRATISTA"=>"CONTRATISTA");
+		$client_status = array("1"=>"Activo","2"=>"Inactivo","3"=>"En mora");
 		if(!empty($results)){
 			$total = $this->model->get_all_total($start, $length, $order, $dir,$search,$columns_valid,$cb);
 			foreach($results as $r) {
 				$data[] = array(
 					$r->id,
+					$r->docId,
 					$r->name,
-					$r->area,
-					$r->type
+					$r->type,
+					$client_status[$r->status]
 				);				
 			}
 		}else{
@@ -88,6 +89,7 @@ class Employee extends CI_Controller {
 	public function get_form(){
 		$data['titulo'] = $this->titulo;
 		$data['procesos'] = array();
+		$data['plans']=$this->model->get_subscription(0);
 		if($this->input->post("id")>0){
 			permisos(array(1,3,6));
 			$configuracion = $this->model->find($this->input->post("id"));
@@ -115,8 +117,8 @@ class Employee extends CI_Controller {
 				'table_close'         => '</table>'
 			);
 			$this->table->set_template($tmpl);
-			$this->table->set_heading('Accion', 'Proceso');
-			if(!empty($detail)){				
+			$this->table->set_heading('Accion', 'Plan','Valor','Inicia','Finaliza');
+			if(!empty($detail)){	
 				foreach ($detail as $item){
 					$links = '';
 					$links .= anchor('#' ,'<i class="fa fa-pencil-alt text-info m-r-10"></i>', array('onclick'=>'formu2('.$item->id.','.$this->input->post("id").'); return false;'));
@@ -124,15 +126,18 @@ class Employee extends CI_Controller {
 					
 					$this->table->add_row(
 						$links,
-						$item->proceso
+						$item->plan,
+						$item->price,
+						$item->start,
+						$item->end,
 					);
 				}
 			}
 			$data['table']= $this->table->generate();
-			$data['procesos'] = $this->model->get_procesos($user['destiny']);
 		}
+		
 		$data['tipe_emple'] =array("NOMINA"=>"NOMINA","CONTRATISTA"=>"CONTRATISTA");
-		$data['tipe_docu'] = array("1"=>"CC","2"=>"TI","3"=>"PA");
+		$data['tipe_docu'] = array("1"=>"Cedula","2"=>"Tarjeta identidad","3"=>"Pasaporte");
 		$data['genders'] = array("H"=>"Hombre","M"=>"Mujer");
 		
 		// $data['stores'] = $this->model->get_stores();
@@ -145,8 +150,8 @@ class Employee extends CI_Controller {
 		permisos(array(1,3,6));
 		/* PERSONALIZAR CAMPOS REQUERIDOS */		
 		$this->form_validation->set_rules('name', 'Nombre', 'required');
-		$this->form_validation->set_rules('destiny', 'Destino', 'required');
-		$this->form_validation->set_rules('id', 'Numero de documento', 'required');
+		$this->form_validation->set_rules('phone', 'Telefono', 'required');
+		$this->form_validation->set_rules('docid', 'Numero de documento', 'required');
 					
 		if ($this->form_validation->run() == FALSE) {
 			$dato['msg']=validation_errors();
@@ -160,23 +165,18 @@ class Employee extends CI_Controller {
 					$this->model->update(
 						array(
 							'id' => $this->input->post('id'),
+							'docId' => $this->input->post('docid'),
 							'typeID' => $this->input->post('typeID'),
 							'name' => $this->input->post('name'),
 							'type' => $this->input->post('type'),
-							'salary' => $this->input->post('salary'),
+							'phone' => $this->input->post('phone'),
 							'rh' => $this->input->post('rh'),
-							'destiny' => $this->input->post('destiny'),
-							'position' => $this->input->post('position'),
-							'schedule' => $this->input->post('schedule'),
+							'age' => $this->input->post('age'),
 							'emergency' => $this->input->post('emergency'),
 							'gender' => $this->input->post('gender'),
 							'birth' => $this->input->post('birth'),
-							'nationality' => $this->input->post('nationality'),
 							'address' => $this->input->post('address'),
 							'city' => $this->input->post('city'),
-							'bank' => $this->input->post('bank'),
-							'work_start' => $this->input->post('work_start'),
-							'work_end' => $this->input->post('work_end'),
 							'edited' => date("Y-m-d H:i:s"),
 							'edited_by' => $this->session->userdata('info')->id
 						)
@@ -190,24 +190,18 @@ class Employee extends CI_Controller {
 			}else{
 				$dato = $this->model->insert(
 					array(
-						'id' => $this->input->post('id'),
+						'docId' => $this->input->post('docid'),
 						'typeID' => $this->input->post('typeID'),
 						'name' => $this->input->post('name'),
 						'type' => $this->input->post('type'),
-						'salary' => $this->input->post('salary'),
+						'phone' => $this->input->post('phone'),
 						'rh' => $this->input->post('rh'),
-						'destiny' => $this->input->post('destiny'),
-						'position' => $this->input->post('position'),
-						'schedule' => $this->input->post('schedule'),
+						'age' => $this->input->post('age'),
 						'emergency' => $this->input->post('emergency'),
 						'gender' => $this->input->post('gender'),
 						'birth' => $this->input->post('birth'),
-						'nationality' => $this->input->post('nationality'),
 						'address' => $this->input->post('address'),
 						'city' => $this->input->post('city'),
-						'bank' => $this->input->post('bank'),
-						'work_start' => $this->input->post('work_start'),
-						'work_end' => $this->input->post('work_end'),
 						'created' => date("Y-m-d H:i:s"),
 						'created_by' => $this->session->userdata('info')->id
 					)
@@ -247,6 +241,13 @@ class Employee extends CI_Controller {
 			echo '</ul>';
 		}
 	}
+	public function get_subscriptions($id){
+		
+		$plans = $this->model->get_subscription($id);
+		$plans->price = formatonumero($plans->price,0);
+		$data['plans']=$plans;
+		echo json_encode($data);
+	}
 	public function get_form2(){
 		$data['titulo'] = $this->titulo;
 		if($this->input->post("id")>0){
@@ -264,8 +265,10 @@ class Employee extends CI_Controller {
 	public function form_send2($type){
 		permisos(array(1,3,6));
 		/* PERSONALIZAR CAMPOS REQUERIDOS */
-		$this->form_validation->set_rules('destinyd', 'destinyd', 'required');
-							
+		$this->form_validation->set_rules('inicio', 'inicio', 'required');
+		$this->form_validation->set_rules('fin', 'fin', 'required');
+		$this->form_validation->set_rules('plan', 'plan', 'required');
+
 		if ($this->form_validation->run() == FALSE) {
 			$dato['msg']=validation_errors();
 			$dato['tipo'] =0;
@@ -293,8 +296,10 @@ class Employee extends CI_Controller {
 				// $employee = $this->model->getEmployeeByid($this->input->post('idp'));
 				$dato = $this->model->insert_detail(
 					array(
-						'employee' => $this->input->post('idp'),
-						'destinyd' => $this->input->post('destinyd'),
+						'user' => $this->input->post('idp'),
+						'sub' => $this->input->post('plan'),
+						'start' => $this->input->post('inicio'),
+						'end' => $this->input->post('fin'),
 						'created' => date("Y-m-d H:i:s"),
 						'created_by' => $this->session->userdata('info')->id
 					)
@@ -405,13 +410,13 @@ class Employee extends CI_Controller {
 		//print_r($_POST);
 		$empleado=$this->model->find($this->input->post('cedfoto'));
 		
-		if( empty($empleado->picture) ){
+		/*if( empty($empleado->picture) ){
 			$this->subir(1,$empleado);
 		}else{
 			$this->subir(2,$empleado);
-		}
+		}*/
 	}
-	public function subir($tipo=1,$empleado)
+	public function subir($tipo=1)
 	{	
 		$this->load->helper('file');
 		$id = $this->input->post('cedfoto');

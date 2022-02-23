@@ -59,25 +59,25 @@ File: scss
   .skin-green .page-titles .breadcrumb .breadcrumb-item.active {
     color: #00c292; }
 	
-.skin-orange {
+.skin-blue {
   /*Theme Colors*/ }
-  .skin-orange .topbar {
+  .skin-blue .topbar {
     background: #fec107; }
-    .skin-orange .topbar .top-navbar .navbar-header .navbar-brand .dark-logo {
+    .skin-blue .topbar .top-navbar .navbar-header .navbar-brand .dark-logo {
       display: none; }
-    .skin-orange .topbar .top-navbar .navbar-header .navbar-brand .light-logo {
+    .skin-blue .topbar .top-navbar .navbar-header .navbar-brand .light-logo {
       display: inline-block;
       color: rgba(255, 255, 255, 0.8); }
-  .skin-orange .sidebar-nav ul li a.active, .skin-orange .sidebar-nav ul li a:hover {
+  .skin-blue .sidebar-nav ul li a.active, .skin-blue .sidebar-nav ul li a:hover {
     color: #fec107; }
-    .skin-orange .sidebar-nav ul li a.active i, .skin-orange .sidebar-nav ul li a:hover i {
+    .skin-blue .sidebar-nav ul li a.active i, .skin-blue .sidebar-nav ul li a:hover i {
       color: #fec107; }
-  .skin-orange .sidebar-nav > ul > li.active > a {
+  .skin-blue .sidebar-nav > ul > li.active > a {
     color: #fec107;
     border-left: 3px solid #fec107; }
-    .skin-orange .sidebar-nav > ul > li.active > a i {
+    .skin-blue .sidebar-nav > ul > li.active > a i {
       color: #fec107; }
-  .skin-orange .page-titles .breadcrumb .breadcrumb-item.active {
+  .skin-blue .page-titles .breadcrumb .breadcrumb-item.active {
     color: #fec107; }
 	
 .skin-megna {

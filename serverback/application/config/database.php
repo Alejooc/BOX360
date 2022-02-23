@@ -78,10 +78,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 if(1==1){
-	$bdh='tho.cv1l0xsi4ea6.us-east-1.rds.amazonaws.com';
-	$bdu='superadmin';
-	$bdp='NuevoPass22SinCovid';
-	$nbd="plantaaris";
+	$bdh='localhost';
+	$bdu='root';
+	$bdp='';
+	$nbd="box";
 }else{
 	$bdh='localhost'; 
 	$bdu='andres';

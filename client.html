@@ -15,7 +15,9 @@
 	<link rel="stylesheet" type="text/css" href="assets/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css" href="assets/node_modules/datatables.net-bs4/css/responsive.dataTables.min.css">
 	<link href="assets/node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="assets/node_modules/dropify/dist/css/dropify.min.css">
+    <link href="assets/node_modules/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
+    <link href="assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+    <!-- Page plugins css --> 
     <link href="dist/css/style.css" rel="stylesheet">
 	<style>
 		.frmSearch {border: 1px solid #a8d4b1;background-color: #c6f7d0;margin: 2px 0px;padding:40px;border-radius:4px;}
@@ -31,7 +33,7 @@
 <![endif]-->
 </head>
 
-<body class="skin-orange fixed-layout">
+<body class="skin-blue fixed-layout">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -168,13 +170,13 @@
                 <!-- ============================================================== -->
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor">Empleados</h4>
+                        <h4 class="text-themecolor">Clientes</h4>
                     </div>
                     <div class="col-md-7 align-self-center text-end">
                         <div class="d-flex justify-content-end align-items-center">
                             <ol class="breadcrumb justify-content-end">
                                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                                <li class="breadcrumb-item active">Empleados</li>
+                                <li class="breadcrumb-item active">Clientes</li>
 								<li><button type="button" class="btn btn-warning m-l-15 text-white" onclick='formu("0");return false'><i class="fa fa-plus-circle"></i>Crear</button></li>
                             </ol>
                             <!-- <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" onclick='formu("0");return false'><i class="fa fa-plus-circle"></i>Crear</button> -->
@@ -208,21 +210,23 @@
 										<thead>
 											<tr>
 												<th>Accion</th>
-												<th>Cedula</th>
+                                                <th>id</th>
+												<th>Documento Identidad</th>
 												<th>Nombre</th>
-												<th>Area</th>
 												<th>Tipo</th>
+                                                <th>Estado</th>
 											</tr>
 										</thead>
 										<tbody>
 										</tbody>
 										<tfoot>
 											<tr>
-												<td></td>												
-												<td>Cedula</td>
+												<td></td>	
+                                                <td></td>												
+												<td>Docimento Identidad</td>
 												<td>Nombre</td>
-												<td>Area</td>
-												<td>Tipo</td>												
+                                                <td>Tipo</td>												
+												<td>Estado</td>
 											</tr>
 										</tfoot>
 									</table>
@@ -377,18 +381,21 @@
     <script src="dist/js/custom.min.js"></script>
 	<script src="assets/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="assets/node_modules/datatables.net-bs4/js/dataTables.responsive.min.js"></script>
+    <!-- Plugin JavaScript -->
+    <script src="assets/node_modules/moment/moment.js"></script>
+    <script src="assets/node_modules/timepicker/bootstrap-timepicker.min.js"></script>
+
+    <script src="assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="assets/node_modules/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 	<!-- Librerias personalizadas -->
-	<script src="assets/node_modules/dropify/dist/js/dropify.min.js"></script>
 	<script src="js/jwt_decode.js"></script>
 	<script src="js/custom/cordovacustom.js"></script>
 	<script src="js/custom/general.js"></script>
-	<script src="js/custom/employee.js"></script>
+	<script src="js/custom/client.js"></script>
 	<!-- Sweet-Alert  -->
     <script src="assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script src="assets/node_modules/sweetalert2/sweet-alert.init.js"></script>
-	<script>
-		$('.dropify').dropify();
-	</script>
+    
 </body>
 
 </html>

@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Model_employee extends CI_Model {
+class Model_client extends CI_Model {
 
 	function __construct() {
 		parent::__construct();
     }	
-	var $tabla='employees';
+	var $tabla='clients';
 	var $tablaA='destinys';
 	var $tablaP='destinys_d';
 	var $tablaED='employees_by_proccess';
@@ -13,9 +13,8 @@ class Model_employee extends CI_Model {
 		if($order !=null) {
 		   $this->db->order_by($order, $dir);
 		}
-		$this->db->select('a.id, a.name, b.name as area,a.type');
+		$this->db->select('a.id, a.name, a.status,a.type,a.docId');
 		$this->db->from($this->tabla.' a');
-		$this->db->join($this->tablaA.' b','a.destiny=b.id');
 		foreach($search as $i=>$where){
 			$ni=$i;
 			if(isset($columns_valid[$ni]) and !empty($where["search"]["value"])) {
@@ -23,9 +22,9 @@ class Model_employee extends CI_Model {
 			}
 		}
 		if (!empty($cb)){
-			$this->db->like( 'a.id' , $cb);
+			$this->db->like( 'a.docId' , $cb);
 			$this->db->or_like( 'a.name' , $cb);
-			$this->db->or_like( 'b.name' , $cb);
+			$this->db->or_like( 'a.status' , $cb);
 			$this->db->or_like( 'a.type' , $cb);
 		}
         $this->db->limit($length,$start);
@@ -38,9 +37,8 @@ class Model_employee extends CI_Model {
 		if($order !=null) {
 		   $this->db->order_by($order, $dir);
 		}
-		$this->db->select('a.id, a.name, b.name as area,a.type');
+		$this->db->select('a.id, a.name, a.status,a.type,a.docId');
 		$this->db->from($this->tabla.' a');
-		$this->db->join($this->tablaA.' b','a.destiny=b.id');
 		foreach($search as $i=>$where){
 			$ni=$i;
 			if(isset($columns_valid[$ni]) and !empty($where["search"]["value"])) {
@@ -50,7 +48,7 @@ class Model_employee extends CI_Model {
 		if (!empty($cb)){
 			$this->db->like( 'a.typeID' , $cb);
 			$this->db->or_like( 'a.name' , $cb);
-			$this->db->or_like( 'b.name' , $cb);
+			$this->db->or_like( 'a.status' , $cb);
 			$this->db->or_like( 'a.type' , $cb);
 		}
         // $this->db->limit($length,$start);
@@ -61,10 +59,10 @@ class Model_employee extends CI_Model {
 	}
 
 	function find($id) {
-		$this->db->select("a.*, b.name as destinyn");
+		$this->db->select("a.*");
         $this->db->limit(1);
         $this->db->where('a.id', $id);
-		$this->db->join($this->tablaA.' b','a.destiny=b.id');
+		//$this->db->join('doc_type'.' b','a.destiny=b.id');
         return $this->db->get($this->tabla.' a')->row();
     }
 	function insert($registro) {
@@ -105,10 +103,10 @@ class Model_employee extends CI_Model {
           return $consulta->result();
 	}
 	function get_detail($id){
-		$this->db->select('a.id, b.name as proceso');
-        $this->db->from($this->tablaED.' a');
-		$this->db->where('a.employee',$id);
-		$this->db->join($this->tablaP.' b','a.destinyd=b.id');
+		$this->db->select('a.id,a.sub,a.start,a.end, b.name as plan,b.price');
+        $this->db->from('client_subscriptions'.' a');
+		$this->db->where('a.user',$id);
+		$this->db->join('subscription'.' b','a.sub=b.id');
 		$this->db->order_by('a.id');
         $consulta = $this->db->get();
         if ($consulta->num_rows() > 0) {
@@ -119,11 +117,31 @@ class Model_employee extends CI_Model {
 		// $this->db->select('employeeidb.id as ebpid, a.destinyd');
         $this->db->limit(1);
         $this->db->where('id', $id);
-        return $this->db->get($this->tablaED)->row();
+        return $this->db->get('client_subscriptions')->row();
+    }
+	function get_subscription($id) {
+
+		// $this->db->select('employeeidb.id as ebpid, a.destinyd');
+			$this->db->from('subscription');
+			$this->db->where('status',1);
+			if ($id>0) {
+				$this->db->where('id',$id);
+				return $this->db->get()->row();
+
+			}else{
+				$consulta = $this->db->get();
+				if ($consulta->num_rows() > 0) {
+					foreach ($consulta->result_array() as $fila) {				
+						$data[ $fila["id"] ] = $fila["name"];
+					}
+					return $data;
+				}
+			}
+		
     }
 	function insert_detail($registro) {
         $this->db->set($registro);
-        $this->db->insert($this->tablaED);
+        $this->db->insert('client_subscriptions');
 		$error=$this->db->error();		
 		if($error["code"]>0){
 			$dato["res"]= "Error: ".$error["message"];

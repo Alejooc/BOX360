@@ -1,4 +1,4 @@
-var modulo='employee';
+var modulo='client';
 var tabla
 $(document).ready(function () {
 	if("mysession" in sessionStorage){		
@@ -82,6 +82,7 @@ $(document).ready(function () {
 			{ "data": 1 },
 			{ "data": 2 },
 			{ "data": 3 },
+			{ "data": 4 }
 		],
 		"order": [[ 1, "desc" ]]
 	});
@@ -231,6 +232,7 @@ function elim(id){
 	});
 }
 function formu2(id,id2){
+	console.log(id);
 	if (id>0){
 		var data = new FormData();
 		data.append('id', id);
@@ -254,7 +256,7 @@ function formu2(id,id2){
 					sessionStorage.clear();
 					window.location="login.html"; 
 				}else{
-					// console.log(dato.datos);
+					 console.log(dato.datos);
 					$("#id2").val(dato.datos.id);
 					$("#destinyd").val(dato.datos.destinyd);
 					$("#idp").val(dato.idp);
@@ -270,6 +272,31 @@ function formu2(id,id2){
 		$("#idp").val(id2);
 	}
 	$('#MyModalDetalle').modal('show');
+}
+function detailext(ev) {
+	var p = ev.options[ev.selectedIndex];
+	var itemVal= p.value
+	$.ajax({
+		type: "POST",
+		url: urlserver+"index.php/"+modulo+"/get_subscriptions/"+itemVal,
+		beforeSend: function(request){
+			request.setRequestHeader('Token', sessionStorage.getItem("mysession"));
+		},
+		contentType: false,
+		processData: false,
+		cahe: false,
+		dataType: "JSON",
+		data: 'data',
+		success: function (dato) {
+			console.table(dato);
+			$('#pland').html(`<h5>Total Accesos: ${dato.plans.access}</h5>`)
+			$('#total').html(`<h5>Total a pagar: ${dato.plans.price}</h5>`)
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			$("#msgno").html( 'Error de conexión:' + textStatus +' '+ errorThrown);
+			$(".alertbottom").show();
+		} 
+	});
 }
 function guardaFormInterno(){
 	var myform = document.getElementById("forminterno1");
@@ -292,7 +319,6 @@ function guardaFormInterno(){
 		data: data,
 		success: function (dato) {
 			$('#MyModalDetalle').modal('hide');
-			cerrarmodal();
 			if(dato.tipo){
 				formu(dato.idp);
 				$("#msgok").html(dato.msg);

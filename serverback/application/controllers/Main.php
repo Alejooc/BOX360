@@ -248,12 +248,12 @@ class Main extends CI_Controller {
 		if(in_array($rol,array(1,3,6))){
 			$dato['menu'].='<li id="itemmenu3">
 				<a onclick="expandir(3);" class="has-arrow  waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-				<i class="fas fa-users text-warning"></i><span class="hide-menu">Empleados</span></a>
+				<i class="fas fa-users text-warning"></i><span class="hide-menu">Clientes</span></a>
 				<ul aria-expanded="false" class="collapse">
-					<li><a href="employee.html">Empleados </a></li>
+					<li><a href="client.html">CLientes</a></li>
 					<li><a href="access.html">Control de accesso</a>
 					<li><a href="accessR.html">Reporte de C.A.</a>
-					<li><a href="extra.html">Horas Extras</a>
+					<!--<li><a href="extra.html">Horas Extras</a>!-->
 				</ul>
 			</li>';
 		}
@@ -268,18 +268,6 @@ class Main extends CI_Controller {
 					<li><a href="supplyitem.html">Insumos por item</a></li>	
 				</ul>
 			</li>';
-		}
-		if(in_array($rol,array(1,2,3,4))){
-			$dato['menu'].='<li id="itemmenu4">
-							<a onclick="expandir(4)" class="has-arrow  waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-							<i class="fas fa-clipboard text-warning"></i><span class="hide-menu">Produccion</span></a>
-							<ul aria-expanded="false" class="collapse">
-								<li><a href="order.html">OP </a></li>
-								<li><a href="report.html">Reportes</a></li>
-								<li><a href="goal.html">Metas de díarias </a></li>
-								<li><a href="supplydelivery.html">Entrega de insumos</a></li>
-							</ul>
-						</li>';
 		}
 		if(in_array($rol,array(1,3))){
 			$dato['menu'].='<li>
