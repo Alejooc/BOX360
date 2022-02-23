@@ -117,7 +117,7 @@ class Client extends CI_Controller {
 				'table_close'         => '</table>'
 			);
 			$this->table->set_template($tmpl);
-			$this->table->set_heading('Accion', 'Plan','Valor','Inicia','Finaliza');
+			$this->table->set_heading('Accion', 'Plan','Valor','Inicia','Finalizaa');
 			if(!empty($detail)){	
 				foreach ($detail as $item){
 					$links = '';
